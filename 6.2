@@ -1,0 +1,582 @@
+Iterator
+
+package sec02;
+
+
+import java.util.*;
+
+public class IteratorDemo{
+	public static void main(String[] args) {
+		
+		Collection<String> list = Arrays.asList("다람쥐", "개구리", "나비");
+		
+		
+		Iterator<String> iterator = list.iterator();
+		while(iterator.hasNext())
+			System.out.print(iterator.next() + "-");
+		System.out.println();
+		
+		while(iterator.hasNext())
+			System.out.print(iterator.next() + "+");
+		System.out.println();
+		
+		iterator = list.iterator();
+		while (iterator.hasNext())
+			System.out.print(iterator.next() + "=");
+		
+	}
+}
+============================================================================================================================================
+
+List
+
+package sec02;
+
+import java.util.Arrays;
+import java.util.*;
+public class ListDemo {
+
+	public static void main(String[] args) {
+		
+		String[] animals1 = {"사슴", "호랑이", "바다표범", "곰"};
+		
+
+		List<String> animals2 = Arrays.asList(animals1);
+		
+		System.out.println(animals2);
+		
+		animals2.set(1, "앵무새");
+		
+		System.out.println(animals2);
+
+		animals2.sort(new Comparator<String>() {
+		
+			public int compare(String o1, String o2) {
+				return 0;
+			}
+			
+		});
+	
+		animals2.sort((a,b) -> a.compareTo(b));
+		System.out.println(animals2);
+		
+		animals2.sort((a,b) -> b.compareTo(a));
+		System.out.println(animals2);
+		
+		animals2.sort((a,b) -> a.length()- b.length());
+		System.out.println(animals2);
+		
+		animals2.sort((a,b) -> b.length()- a.length());
+		System.out.println(animals2);
+		
+		System.out.println("=".repeat(40));
+		
+		List<String> cars = Arrays.asList("그랜져", "소나타","아반테", "제네시스");
+		System.out.println(cars);
+		
+		cars.set(0, "산타페");
+		System.out.println(cars);
+		
+		//for(String s : animals2)
+	//		System.out.print(s + " ");
+	//	System.out.println(" ");
+
+		
+	}
+
+}
+
+
+
+============================================================================================================================================
+ArrayList
+
+package sec02;
+
+import java.util.*;
+
+public class ArrayListDemo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		List<String> list = List.of("그랜저", "소나타", "제네시스" , "소울");
+		System.out.println(list.get(0));
+		System.out.println(list.indexOf("그랜저"));
+		System.out.println(list.contains("제네시스"));
+
+		System.out.println(list);
+		
+		List<String> cars1 = new ArrayList<>(list);
+		cars1.add("싼타페");
+		
+		System.out.println(cars1);
+		List<String> cars2 = new ArrayList<>(list);
+		cars2.remove("제네시스");
+		System.out.println(cars2);
+		
+		cars2.replaceAll(s-> "뉴"+s);
+		System.out.println(cars2);
+		
+		System.out.println(cars1.contains(cars2.get(0)));
+		cars2.removeIf(c-> c.startsWith("소"));
+		
+		System.out.println(cars2);
+		
+		cars1.clear();
+		System.out.println(cars1);
+
+		
+		
+	}
+
+}
+
+============================================================================================================================================
+
+Stack
+
+package sec02;
+import java.util.*;
+public class StackDemo {
+
+	public static void main(String[] args) {
+		
+		Stack<String> s1 = new Stack<String>();
+		s1.push("사과");
+		s1.push("바나나");
+		s1.push("체리");
+		
+
+		System.out.println(s1);
+		System.out.println(s1.peek());
+		System.out.println(s1.pop());
+		System.out.println(s1);
+	
+	
+		Stack<Integer> s2 = new Stack<>();
+		s2.add(10);
+		s2.add(20);
+		s2.add(100);
+		
+		System.out.println(s2);
+		
+		while(!s2.empty())
+			System.out.print(s2.pop()+ " ");
+	}
+	
+
+}
+
+
+============================================================================================================================================
+Performance
+
+
+package sec02;
+import java.util.*;
+public class PerformanceDemo {
+
+	public static void main(String[] args) {
+		
+		//List<Integer> li = new ArrayList<>();
+		ArrayList<Integer> al = new ArrayList<>();
+		LinkedList<Integer> ll = new LinkedList<>();
+		long start = System.currentTimeMillis();
+		for(int i=0; i<100000; i++)
+			al.add(0,i);
+		long end = System.currentTimeMillis();
+		long duration = end - start;
+		System.out.println("ArrayList로 처리 시간 :"+ duration);
+		
+		
+		long start1 = System.currentTimeMillis();
+		for(int i=0; i<100000; i++)
+			ll.add(0,i);
+		long end1 = System.currentTimeMillis();
+		long duration1 = end1 - start1;
+		System.out.println("LinkedList로 처리 시간 :"+ duration1);
+		
+		
+		
+
+	}
+
+}
+
+============================================================================================================================================
+
+Queue
+
+package sec02;
+
+import java.util.Queue;
+import java.util.*;
+public class QueueDemo {
+
+	public static void main(String[] args) {
+		
+		
+		Queue<String> q =new LinkedList<>();
+		
+		System.out.println(q.poll());
+		q.offer("사과");
+		q.offer("바나나");
+		System.out.println(q);
+		q.add("체리");
+		System.out.println(q);
+		q.remove();
+		System.out.println(q);
+		System.out.println(q.poll());
+		System.out.println(q);
+		
+		
+
+	}
+
+}
+============================================================================================================================================
+
+HashSet1
+
+
+package sec02;
+import java.util.*;
+public class HashSe1Demo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String[] fruits = {"사과", "바나나", "포도", "수박"};
+		Set<String> h1 = new HashSet<>();
+		Set<String> h2 = new HashSet<>();
+		List<String> a1 = new ArrayList<>();
+		
+		for(String s:fruits)
+			System.out.print(s+" ");
+		
+			
+		System.out.println();
+		for(String s: fruits) {
+			h1.add(s); 
+			a1.add(s);
+	}
+		System.out.println(h1);
+		System.out.println(a1);
+		System.out.println("=".repeat(40));
+		
+		h1.add("바나나"); a1.add("바나나");
+			
+		System.out.println(h1);
+		System.out.println(a1);
+		
+		System.out.println(h1.size());
+		System.out.println(h1.contains("수박"));
+		List<String> list = Arrays.asList(fruits);
+		
+		h2.addAll(list);
+		System.out.println(h2);
+		h2.clear();
+		System.out.println(h2.isEmpty());
+		
+		
+		
+	}
+
+}
+
+============================================================================================================================================
+
+HashSet 2
+package sec02;
+import java.util.*;
+public class HashSe2Demo {
+
+	public static void main(String[] args) {
+		
+		Set<Fruit> fruits = new HashSet<>();
+		fruits.add(new Fruit("사과"));
+		fruits.add(new Fruit("사과"));
+		System.out.println(fruits.size());
+		System.out.println(fruits);
+
+	}
+
+}
+
+
+class Fruit{
+	String name;
+	
+	public Fruit(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Fruit other = (Fruit) obj;
+		return Objects.equals(name, other.name);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
+	
+	public String toString() {
+		return String.format("Fruit(%s", name);
+	}
+}
+
+
+============================================================================================================================================
+
+TreeSet
+
+
+package sec02;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class TreeSetDemo {
+
+	public static void main(String[] args) {
+		Set<String> set = Set.of("포도", "수박", "사과", "키위", "망고");
+		HashSet<String> hashset = new HashSet<>(set);
+		TreeSet<String> treeset = new TreeSet<>(set);
+		System.out.println(hashset);
+		System.out.println(treeset);
+		
+		System.out.println(treeset.first());		
+		System.out.println(treeset.last());
+		System.out.println(treeset.lower("사과"));
+		System.out.println(treeset.higher("사과"));
+	}
+
+}
+
+
+============================================================================================================================================
+
+HashMap 1
+
+package sec03;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.*;
+public class HashMap1Demo {
+
+	public static void main(String[] args) {
+		Map<String, Integer> map = Map.of("사과", 5,"바나나", 3,"포도", 10, "딸기",1);
+		Map<String, Integer> fruits = new HashMap<>(map);
+		
+		fruits.put("딸기", 20);
+		
+		System.out.println(fruits);
+		System.out.println(fruits.get("바나나"));
+		
+		fruits.put("복숭아", 3);
+		System.out.println(fruits);
+		
+		fruits.remove("포도");
+		System.out.println(fruits);
+		
+		fruits.keySet();
+		fruits.values();
+		fruits.entrySet();
+		
+		for(String k : fruits.keySet())
+			if(k .equals("바나나"))
+				fruits.put(k, 10);
+		System.out.println(fruits);
+		
+		int sum =0;
+		for(Integer v :  fruits.values())
+			sum +=v;
+		
+		System.out.println( "총합 : " + sum +", 평균 : " + sum/fruits.size());
+		
+		for(Entry<String, Integer> e: fruits.entrySet()) {
+		
+			System.out.println(e.getKey()+":" + e.getValue());
+			
+		}
+	}
+
+}
+
+============================================================================================================================================
+
+HashMap 2
+
+package sec03;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+
+class Fruit{
+	String name;
+	
+	public Fruit(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Fruit other = (Fruit) obj;
+		return Objects.equals(name, other.name);
+	}
+	
+	@Override
+	
+	public int hashCode() {
+		return Objects.hash(name);
+	}
+	
+	public String toString() {
+		return String.format("Fruit(%s", name);
+	}
+}
+
+
+public class HashMap2Demo {
+
+	public static void main(String[] args) {
+		
+		Map<Fruit, Integer> map = new HashMap<>();
+		map.put(new Fruit("사과"), 5);
+		map.put(new Fruit("사과"), 2);
+
+		map.put(null, 3);
+		System.out.println(map.size());
+		System.out.println(map);
+
+	}
+
+}
+
+============================================================================================================================================
+
+Sort, rotate, shuffle
+
+package sec04;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class SortDemo {
+
+	public static void main(String[] args) {
+		String[] fruits = {"포도", "수박", "사과","키위","망고"};
+
+		List<String> list = Arrays.asList(fruits);
+		
+		Collections.sort(list, Collections.reverseOrder());
+		
+		System.out.println(list);
+		
+		Collections.reverse(list);
+		System.out.println(list);
+
+		Collections.rotate(list,3);
+		System.out.println(list);
+		
+		
+		Collections.shuffle(list);
+		System.out.println(list);
+		
+	}
+	
+
+}
+
+
+============================================================================================================================================
+
+Search
+
+package sec04;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class SearchDemo {
+
+	public static void main(String[] args) {
+
+		String[] s = {"황금을", "돌", "같이", "보라"};
+		List<String> list = Arrays.asList(s);
+		Collections.sort(list);
+
+		System.out.println(list);
+
+		
+		int i = Collections.binarySearch(list, "보라");
+
+		System.out.println(i);
+	}
+
+}
+
+============================================================================================================================================
+etc(Collections)
+
+package sec04;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+public class EtcDemo {
+
+	public static void main(String[] args) {
+		List<String> list1 = List.of("사과","포도", "수박","사과", "키위","포도","망과","사과");
+		
+		
+		HashSet<String> set = new HashSet<>(list1);
+
+		System.out.println(set);
+
+		List<String> list2 = new ArrayList<>(set);
+
+
+		Collections.sort(list2);
+		System.out.println(list2);
+		
+		Map<String, Integer> map = new HashMap<>();
+		for(String fruit : list2) {
+			System.out.printf("%s : %d\n", fruit,Collections.frequency(list1, fruit));
+			map.put(fruit, Collections.frequency(list1, fruit));
+		}
+		
+		System.out.println(map);
+		
+		
+
+		
+	}
+
+}
+
+
