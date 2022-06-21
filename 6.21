@@ -145,3 +145,68 @@ public class Laziness1Demo {
 }
 
 ===============================================================================================================================
+
+Optional 타입 생성 전후의 값을 출력
+
+package Sec03;
+
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+
+public class Optional1Demo {
+
+	public static void main(String[] args) {
+		OptionalInt i = OptionalInt.of(100);
+		OptionalDouble d = OptionalDouble.of(3.14);     // 정수, 실수, 객체를 위한 옵션 타입을 생성한다.
+		Optional<String> s = Optional.of("apple");
+
+		System.out.printf("%d, %.2f, %s", i.getAsInt(),d.getAsDouble(),s.get());  //옵션 타입으로 포장하기 이전값을 출력.
+		
+		System.out.println("");
+		
+		System.out.println(i);
+		System.out.println(d);				//옵션 타입으로 포장된 값을 출력한다.
+		System.out.println(s);
+		
+		double x = 1, y = 2;
+		OptionalDouble od =(
+				y == 0? OptionalDouble.empty() : OptionalDouble.of(x/y));   // 분모값 여부에 따라 다르게 처리하는 나눗셈 메서드
+		System.out.println(od);
+		System.out.println(od.getAsDouble());
+	}
+
+}
+
+===============================================================================================================================
+
+null 값이 없을 때 Optional 클래스 사용법
+package Sec03;
+
+import java.util.Optional;
+
+public class Optional2Demo {
+
+	public static void main(String[] args) {
+		String s1 ="안녕";
+		Optional<String> o = Optional.ofNullable(s1);	// 문자열을 Optional 타입으로 변환한다.
+														// ofNullable()는 of()와 달리 null도 가질 수 있다.
+		if(s1 != null)
+			System.out.print(s1 + " ");    // null이 아니면 출력
+		else System.out.print("없음" + " ");	// null이면 출력
+		
+		if(o.isPresent())
+			System.out.print(o.get() +" ");  // null이 아니면 출력  isPresent는 널이 아닌 경우를 지칭
+		else System.out.print("없음" + " ");	// null이면 출력
+
+		String s2 = o.orElse("없음");  // null이면 출력
+		System.out.print(s2 +" "); 	// null이 아니면 출력
+		
+		o.ifPresentOrElse(e -> System.out.println(e+ " ") , () -> System.out.println("없음"+ " ") );  // 값이 있으면 e 출력 없으면  "없음" 출력
+
+	}
+
+}
+
+===============================================================================================================================
+
