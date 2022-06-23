@@ -1,0 +1,391 @@
+package Chap04;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Dish {
+	private final String name;
+	private final boolean vegetarian;
+	private final int calories;
+	private final Type type;
+	public enum Type {MEAT, FISH, OTHER}	//객체가 아니라 변수 타입
+	
+	public Dish(String name, boolean vegetarian, int calories, Type type) {
+		this.name = name;
+		this.vegetarian = vegetarian;
+		this.calories = calories;
+		this.type = type;
+		}
+	
+	public String getName() {return name;}
+	public boolean isVegetarian() {return vegetarian;}
+	public int getCalories() {return calories;}
+	public Type getType() {return type;	}
+	
+	@Override
+	public String toString() {
+		return name ;
+	}
+	
+	
+	public String allString() {
+		return "(" + name + "," + vegetarian + "," + calories + "," + type + ")";
+	}
+	
+	public static final List<Dish> menu = Arrays.asList(
+			new Dish("pork", false, 800, Dish.Type.MEAT),
+			new Dish("beef", false, 700, Dish.Type.MEAT),
+			new Dish("chicken", false, 400, Dish.Type.MEAT),
+			new Dish("french fries", true, 530, Dish.Type.OTHER),
+			new Dish("rice", true, 350, Dish.Type.OTHER),
+			new Dish("season fruit", true, 120, Dish.Type.OTHER),
+			new Dish("pizza", true, 550, Dish.Type.OTHER),
+			new Dish("prawns", false, 400, Dish.Type.FISH),
+			new Dish("salmon", false, 450, Dish.Type.FISH)
+			);
+}
+
+=========================================================================================================================================================
+
+package Chap04;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+public class StreamBasic {
+
+	public static void main(String[] args) {
+		System.out.println(Dish.menu);
+		for(Dish dish : Dish.menu) {
+			System.out.println(dish.allString());
+		}
+		
+		//칼로리가 400 이하인 요리를 알려주세요. 정렬해서
+		System.out.println("=".repeat(40));
+		
+		List<Dish> lowCaloriesDishs = new ArrayList<>();	// 칼로리 400 이하 요리를 dish 타입으로 저장 공간 생성
+		for(Dish dish: Dish.menu) {
+			if (dish.getCalories() <= 400)
+				lowCaloriesDishs.add(dish);  //칼로리 400이하 요리의 dish 타입의 전체 객체를 저장
+		}
+		
+		List<String> lowCaloriesDishsName = new ArrayList<>();	// 칼로리 400 이하 요리의 이름만 저장할 공간 생성
+		for(Dish dish: Dish.menu)
+		{
+			if(dish.getCalories()<=400) {
+				lowCaloriesDishsName.add(dish.getName());		//칼로리 400이하 요리의 이름만 저장
+			}
+		}
+		
+		System.out.println(lowCaloriesDishsName);
+		System.out.println("=".repeat(40));
+		
+		lowCaloriesDishs.sort((a,b)-> (Integer.compare(a.getCalories(), b.getCalories()))); 	// 정수끼리 비교후 정렬
+		
+		for(Dish dish : lowCaloriesDishs)
+			System.out.println(dish.allString());	// 칼로리로 정렬후 출력
+		
+		lowCaloriesDishsName.sort(null);
+		System.out.println(lowCaloriesDishsName);
+		System.out.println("========= Stream 활용 ========="	);
+		List<String> lowCaloriesName2 =
+		Dish.menu.stream()
+		.filter(dish -> dish.getCalories() <= 400)
+		//.sorted((a,b) -> (Integer.compare(a.getCalories(), b.getCalories())));
+		.sorted(Comparator.comparing(Dish::getCalories))
+		.map((Dish d) -> d.getName())			//Dish d의 내용을 객체 name만 존재하도록 바꿈 
+		.collect(Collectors.toList());
+		
+		System.out.println(lowCaloriesName2);
+		System.out.println("=".repeat(40));
+		
+		List<String> lowCaloriesName3 =
+		Dish.menu.stream()
+		.filter(dish ->dish.getCalories() <=400)
+		.sorted(Comparator.comparing(Dish::getName))
+		.map(Dish::getName).collect(Collectors.toList());
+		
+
+		System.out.println(lowCaloriesName3);
+		
+	
+  	}
+	}
+
+=========================================================================================================================================================
+
+package Chap04;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class StreamQuiz {
+
+	public static void main(String[] args) {
+		//칼로리가 300이상인 요리이름 리스트 저장하시요.
+		
+		List<String> highCaloriesDishesName = new ArrayList<>();
+		Iterator<Dish> iterator = Dish.menu.iterator();
+		while(iterator.hasNext()) {
+			Dish dish = iterator.next();
+			if(dish.getCalories()>300)
+				highCaloriesDishesName.add(dish.getName());
+		}
+
+	
+	
+	List<String> highCaloriesDishesName2 =
+	Dish.menu.stream().filter(dish -> dish.getCalories() > 300)
+	//map(Dish::getName)
+	.map((Dish d) -> d.getName())			
+	.collect(Collectors.toList());
+	
+	System.out.println(highCaloriesDishesName2);
+
+	
+	
+	}
+
+
+}
+
+=========================================================================================================================================================
+
+package Chap04;
+
+import static Chap04.Dish.menu;  			// Dish 단어 줄이기
+
+import java.util.List;
+import java.util.stream.Collectors;
+public class HighCaloriesNames {
+
+	public static void main(String[] args) {
+		
+		//300칼로리 이상의 요리이름 리스트를 3개만 출력
+		
+		List<String> names =
+				menu.stream()			// 위에서 import해서 Dish를 안써도 된다
+				.filter(d-> {
+					System.out.println("필터링 : " + d.getName());
+					return d.getCalories() > 300;}
+				)
+				.map(dish-> {
+					System.out.println("맵핑 : " +  dish.getName());
+					return dish.getName();})
+				.limit(3)
+				.collect(Collectors.toList());
+				
+				System.out.println(names);
+	}
+
+}
+
+=========================================================================================================================================================
+
+package Chap05;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Filtering {
+	public static void main(String[] args) {
+	
+		//채식단 요리 검색
+		//프레디케이트로 검색
+		System.out.println("채식단 검색");
+		List<Dish> vegetarianMenu = 
+		Dish.menu.stream()
+			.filter(dish->dish.isVegetarian())
+			.collect(Collectors.toList());
+	
+		vegetarianMenu.forEach(System.out::println);
+		//	vegetarianMenu.forEach(e->System.out.println(e.allString()));
+		//	vegetarianMenu.forEach(e->System.out.println(e +" "));	
+		
+		
+		//유니크 요소로 필터
+		List<Integer> numbers = Arrays.asList(1,2,1,3,3,2,4);
+		numbers.stream().distinct().forEach(e->System.out.print(e + " "));	//distinct 매소드 : 중복값 제거
+		
+		//칼로리 값을 기준으로 리스트를 오름차순 정렬
+		System.out.println("=".repeat(50));
+		
+		List<Dish> specialMenu = Arrays.asList(
+				
+				new Dish("pork", false, 800, Dish.Type.MEAT),
+				new Dish("beef", false, 700, Dish.Type.MEAT),
+				new Dish("chicken", false, 400, Dish.Type.MEAT),
+				new Dish("french fries", true, 530, Dish.Type.OTHER),
+				new Dish("rice", true, 350, Dish.Type.OTHER),
+				new Dish("season fruit", true, 120, Dish.Type.OTHER),
+				new Dish("pizza", true, 550, Dish.Type.OTHER),
+				new Dish("prawns", false, 400, Dish.Type.FISH),
+				new Dish("salmon", false, 450, Dish.Type.FISH)
+				
+			
+				
+				
+				);
+	
+		//320 칼로리 낮은 요리
+		List<Dish> filteredMenu=
+		specialMenu.stream()
+		.filter(dish-> {
+			System.out.println("필터링 : " + dish.getName());
+			System.out.println(" ");
+			
+			return dish.getCalories() <320;})
+		.collect(Collectors.toList());
+		System.out.println(filteredMenu);
+	
+	
+		
+		System.out.println("=".repeat(50));
+		
+		List<Dish> sliceMenu1 =
+		specialMenu.stream()
+		.takeWhile(dish -> {									//takeWhile	조건문에 만족하지 않으면 그 순간 Break한다
+			System.out.println("필터링 : " + dish.getName());		// filter 조건문에 만족하지 않아도 모든 데이터를 실행한다
+			return dish.getCalories() < 320;
+			
+		})
+		.collect(Collectors.toList());
+		
+		System.out.println(sliceMenu1);
+		
+		System.out.println("=".repeat(50));
+		
+		
+		List<Dish> sliceMenu2 =
+				specialMenu.stream()
+				.dropWhile(dish -> {									
+					System.out.println("필터링 : " + dish.getName());		//dropWhile은 조건에 만족하는 시점의 데이터를 모두 버리고 남은 데이터 출력 
+					return dish.getCalories() < 320;
+					
+				})
+				.collect(Collectors.toList());
+				
+		System.out.println(sliceMenu2);
+
+		System.out.println("=".repeat(50));
+		
+		//스트림 연결
+		
+		List<Dish> dishesLimit3 = Dish.menu.stream()
+				.filter(d-> d.getCalories() > 300)
+				.limit(3)										// limit은 조건에 만족하는 데이터 갯수가 만족할때까지 실행한다
+				.collect(Collectors.toList());
+		System.out.println(dishesLimit3);
+		
+		System.out.println("=".repeat(50));
+		
+		//요소생략
+		
+		List<Dish> dishesSkip2 = Dish.menu.stream()
+				.filter(d -> d.getCalories() >300)
+				.skip(2)								//skip은 조건에 만족하는 데이터를 제외하고 나무지를 출력
+				.collect(Collectors.toList());
+		
+		System.out.println(dishesSkip2);
+		
+		System.out.println("=".repeat(50));
+		
+	}
+
+}
+
+=========================================================================================================================================================
+
+package Chap05.quiz;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import Chap05.Dish;
+import Chap05.Dish.Type;
+
+public class quiz01 {
+
+	public static void main(String[] args) {
+		
+		// 1. 스트림을 이용해서 처음 등장하는 두 고기요리 검색
+
+		List<Dish> searchMenu = Dish.menu.stream()
+				.filter(dish -> dish.getType() == Type.MEAT)
+				.limit(2)
+				.collect(Collectors.toList());
+		
+		System.out.println(searchMenu);
+	}
+
+}
+
+=========================================================================================================================================================
+
+package Chap05.quiz;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class quiz02 {
+
+	public static void main(String[] args) {
+		//1. 입력을 받아서 [1,2,3,4,5] 값을 제곱결과 map
+		
+		List<Integer> numbers = Arrays.asList(1,2,3,4,5);
+		
+		numbers.stream()
+		.map(a -> a*a).
+		forEach(e -> System.out.print( e + " "));
+		
+		System.out.println("");
+		List<int[]> result =
+		numbers.stream().map(a->{
+			int b = a*a;
+			
+			return new int[] {a,b};
+		}).collect(Collectors.toList());
+		
+		for(int [] e : result)
+			System.out.println(e[0] + " : " + e[1]);
+		
+	
+		
+		List<Integer> number1 = Arrays.asList(1,2,3,4,5);
+		List<Integer> number2 = Arrays.asList(6,7,8);
+		
+		System.out.println();
+		
+		List<int[]> pairs =
+			number1.stream()
+			.flatMap((Integer i) -> 
+			number2.stream()
+			.map((Integer j) -> new int[] {i,j}))
+			.collect(Collectors.toList());
+		System.out.println(pairs.size());
+		System.out.println(pairs.get(0)[1]);
+		
+		for(int [] e : pairs) {
+			System.out.println(e[0]+ " : " + e[1]); 
+			
+		}
+	}
+
+}
+
+
+
+
+
+
+
+
