@@ -1,0 +1,503 @@
+package chap05;
+
+import java.util.Objects;
+
+public class Trader {
+	private String name;
+	private String city;
+	public Trader(String name, String city) {
+		this.name = name;
+		this.city = city;
+	}
+	public String getName() {return name;}
+	public void setName(String name) {this.name = name;}
+	public String getCity() {return city;}
+	public void setCity(String city) {this.city = city;}
+	@Override
+	public String toString() {
+		return "(Trader : " + name + " in " + city + " )";
+		
+	}
+	@Override
+	public int hashCode() {
+		int hash = 17;
+		hash = hash* 31 + (name == null ? 0 : name.hashCode());
+		hash = hash*31 + (city == null? 0 : city.hashCode());
+		return hash;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Trader))
+			return false;
+		Trader other = (Trader) obj;
+		return Objects.equals(city, other.city) && Objects.equals(name, other.name);
+	}
+	
+
+}
+
+========================================================================================================================================
+
+package chap05;
+
+import java.util.Objects;
+
+public class Transaction {
+
+	private Trader trader;
+	private int year;
+	private int value;
+	public Transaction(Trader trader, int year, int value) {
+
+		this.trader = trader;
+		this.year = year;
+		this.value = value;
+	}
+	public Trader getTrader() {return trader;}
+	public void setTrader(Trader trader) {this.trader = trader;}
+	public int getYear() {return year;}
+	public void setYear(int year) {this.year = year;}
+	public int getValue() {return value;}
+	public void setValue(int value) {this.value = value;}
+	@Override
+	public String toString() {
+		return "{" + trader + "," + year + "," + value + "}";
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		int hash = 17;
+		hash = hash * 31 + (trader == null? 0 : trader.hashCode());
+		hash = hash * 31 + year;
+		hash = hash * 31 + value;
+		return hash;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)	return true;
+		if (!(obj instanceof Transaction))	return false;
+		Transaction other = (Transaction) obj;
+		return Objects.equals(trader, other.trader) && value == other.value && year == other.year;
+	}
+	
+	
+	
+	
+	
+
+}
+
+========================================================================================================================================
+
+package chap05;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class Practice {
+
+	public static void main(String[] args) {
+		Trader raoul = new Trader("Raoul", "Cambridge");
+		Trader mario = new Trader("Mario", "Milan");
+		Trader alan = new Trader("Alan", "Cambridge");
+		Trader brian = new Trader("Brian", "Cambridge");
+		
+		
+		List<Transaction> transactions = Arrays.asList(
+				new Transaction(brian, 2011, 300),
+				new Transaction(raoul, 2012, 1000),
+				new Transaction(raoul, 2011, 400),
+				new Transaction(mario, 2012, 710),
+				new Transaction(mario, 2012, 700),
+				new Transaction(alan, 2012, 950)
+				);
+		
+		//1. 2011년 일어난 모든 트랜잭션을 찾아 값을 오름차순으로 정리하시오.
+		
+	    transactions.stream()
+		.filter(t-> t.getYear() == 2011)
+		.sorted((t1,t2) -> 
+		Integer.compare(t1.getValue(), t2.getValue()))
+		.forEach(t-> {System.out.println(t);});
+	    
+	    System.out.println("=".repeat(30));
+	    
+	    List<Transaction> tr2011 = transactions.stream()
+	    		.filter(t -> t.getValue() == 2011)
+	    		.sorted(Comparator.comparingInt(t -> t.getValue()))
+	    		//.sorted(Comparator.comparing(Transaction::getValue))
+	    		.collect(Collectors.toList());
+	    
+	    System.out.print(tr2011);
+	    System.out.println("=".repeat(30));
+	    
+	    //2. 거래자의 근무하는 모든 도시를 중복 없이 나열하시오.
+	   List<String> cities = transactions.stream()
+	    .map(t-> t.getTrader().getCity())
+	    .distinct()
+	    .collect(Collectors.toList());
+	   System.out.println(cities);
+	   
+	   Set<String> cities2 = transactions.stream()
+			   .map(t->t.getTrader().getCity())
+			   .collect(Collectors.toSet()); 
+	   System.out.println(cities2);
+	   
+	   //3. 케임브리지에서 근무하는 거래자를 찾아서 이름순으로 정렬하시오.
+	   
+	   List<Trader> traders = transactions.stream().map(t->t.getTrader())
+	   .filter(t-> t.getCity().equals("Cambridge"))
+	   .distinct()
+	   .sorted(Comparator.comparing(Trader::getName))
+	   .collect(Collectors.toList());
+	   System.out.println(traders);
+	   
+	   //4. 모든 거래자의 이름을 알파벳으로 정렬해서 문자열로 반환하시오.
+	   
+	   List<String> names = transactions.stream()
+			   .map(t->t.getTrader().getName())
+			   .distinct()
+			   .sorted()
+			   .collect(Collectors.toList());
+	   System.out.println(names);
+	   
+	   String names2 = names.stream().reduce("", (a,b) -> a+ "-" +b);		//Optional이 아니므로 초기값 ""으로 설정
+	   Optional<String> names3 = names.stream().reduce((a,b) -> a+ "-" +b);	//Optional이므로 초기값 설정 안해도 ok
+	   System.out.println(names2);
+	   System.out.println(names3.get());
+	   
+	   // 5. Milan에 거주하는 거래자가 있는가?
+	   boolean milanBased =
+	   transactions.stream()
+	   .anyMatch(t->t.getTrader().getCity().equals("Milan"));
+	   System.out.println(milanBased);
+	   // 5: Cambridge에 사는 거리자의 모든 거래내역 출력
+	   transactions.stream().filter(t -> t.getTrader().getCity().equals("Cambridge"))
+	   .map(t-> t.getValue()).forEach(System.out::println);
+
+	   System.out.println("=".repeat(50));
+	   // 7. 트랜잭션 최대치
+	   
+	   Optional<Integer> max = transactions.stream().map(t -> t.getValue()).max((a,b) -> Integer.compare(a, b));		
+	   max.ifPresent(System.out::println);
+	   transactions.stream().mapToInt(t-> t.getValue()).max();			// 정수형 데이터로 변경
+	   
+	}
+	
+
+}
+
+========================================================================================================================================
+
+package chap05;
+
+import java.util.Optional;
+
+public class Finding {
+
+	public static void main(String[] args) {
+	/*	//채식단 여부
+		boolean isVegetrianFriendlyMenu =
+				Dish.menu.stream().anyMatch(d-> d.isVegetarian());
+		// 칼로리가 100칼로리 이하인 메뉴로만 구성 여부
+		boolean isHealtyMenu =
+				Dish.menu.stream().allMatch(d-> d.getCalories() < 1000);
+		boolean isHealtyMenu2 =
+				Dish.menu.stream().noneMatch(d-> d.getCalories() >= 1000);
+
+		Optional<Dish> findVegetarianDish =
+				Dish.menu.stream().filter(d-> d.isVegetarian()).findAny();
+		
+		if(isVegetrianFriendlyMenu) {
+			System.out.println("채식식단 가능");
+		}
+		System.out.println(isHealtyMenu);
+		System.out.println(isHealtyMenu2);
+		
+		Optional<Dish> dish = findVegetarianDish;
+		dish.ifPresent(d-> System.out.println(d.getName()));
+*/
+		//함수화 
+		if(isVegetrianFriendlyMenu()) {
+			System.out.println("채식식단 가능");
+		}
+		System.out.println(isHealtyMenu());
+		System.out.println(isHealtyMenu2());
+		
+		Optional<Dish> dish = findVegetarianDish();
+		dish.ifPresent(d-> System.out.println(d.getName()));
+
+	}
+	
+//함수 만들기
+	
+	static boolean isVegetrianFriendlyMenu() {
+		return 	Dish.menu.stream().anyMatch(d-> d.isVegetarian());
+	}
+	static boolean isHealtyMenu() {
+		return 	Dish.menu.stream().allMatch(d-> d.getCalories() < 1000);
+	}
+	
+	static boolean isHealtyMenu2() {
+		return Dish.menu.stream().noneMatch(d-> d.getCalories() >= 1000);
+	}
+	static Optional<Dish> findVegetarianDish() { 
+		return	Dish.menu.stream().filter(d-> d.isVegetarian()).findAny();
+	}
+}
+
+========================================================================================================================================
+
+package chap05;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+public class Reducing {
+
+	public static void main(String[] args) {
+		List<Integer> numbers  = Arrays.asList(3,4,5,1,2);
+		int sum =
+		numbers.stream().reduce(0,(a,b)-> a+b); // reduce  스트림의 원소들을 하나씩 누적하며 더하는 매서드
+		System.out.println(sum);
+	
+		int sum2 = numbers.stream().reduce(0, Integer::sum);
+		System.out.println(sum2);
+		
+		int max = numbers.stream().reduce(0, (a,b) -> Integer.max(a, b));	// 누적하면서 a,b를 비교해서 최대값을 구한다
+		System.out.println(max);	
+		
+		int min = numbers.stream().reduce(0, Integer::min);			// 누적하면서 a,b를 비교해서 최솟값을 구한다
+		System.out.println(min);	
+		
+		Optional<Integer> min2 = numbers.stream().reduce(Integer::min);   //초기값이 null일까봐 Optional 사용해서 방지
+		System.out.println(min2.get());
+		
+		
+		int calogries = Dish.menu.stream()
+				.map(Dish::getCalories)
+				.reduce(0, Integer::sum);
+		System.out.println(calogries);
+	}
+
+}
+
+========================================================================================================================================
+
+package chap05;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.OptionalInt;
+
+public class NumbericStream {
+
+	public static void main(String[] args) {
+		List<Integer> numbers = Arrays.asList(3,4,5,1,2);
+		System.out.println(numbers);
+		Arrays.stream(numbers.toArray())
+		.forEach(e-> System.out.print(e+" "));
+		System.out.println("\n" + "=".repeat(20));
+		int sum = Dish.menu.stream().mapToInt(Dish::getCalories).sum();
+		System.out.println(sum);
+		
+		OptionalInt max = Dish.menu.stream().mapToInt(Dish::getCalories).max();
+		max.ifPresentOrElse(i-> System.out.println(i),()-> System.out.println("최대값은 1"));
+	}
+
+}
+
+========================================================================================================================================
+
+
+package sec01;
+
+public class Lambda1Demo {
+
+	public static void main(String[] args) {
+		Sum sum = new Sum() {
+			
+			public int sum(int a, int b) {
+				return a+b;
+				
+			}
+		};
+		sum.sum(10, 20);
+		Sum sum3 = (x,y) -> x+y ;
+		sum3.sum(10,20);
+		Sum sum4 = (x,y) -> {
+			System.out.print("x : " +x + " + y : " +y);
+			return x+y;
+		};
+		System.out.print(" = " + sum4.sum(20, 30));	
+	}
+
+}
+
+
+package sec01;
+
+public interface Sum {
+	int sum(int a, int b);
+
+}
+
+========================================================================================================================================
+package sec01;
+
+import java.util.function.Predicate;
+
+public class Over30 implements Predicate<Integer> {
+
+	
+	
+	@Override
+	public boolean test(Integer t) {
+			return t>= 30;
+	}
+	
+}
+
+========================================================================================================================================
+
+package sec01;
+import java.util.function.Predicate;
+
+public class PredicateTest {
+
+	static int[] orAge = {29,30,34,32,30,28,31,29,31,30};
+	
+	public static void main(String[] args) {
+		System.out.print("30이상인 사람들 : ");
+		PredicateTest.testPrint(new Over30());
+
+		System.out.print("30이하인 사람들 : ");
+		PredicateTest.testPrint(new Predicate<Integer>() {
+
+			@Override
+			public boolean test(Integer t) {
+				return t <=30;
+			}
+		});
+		
+		System.out.print("29세 이상인 사람들 : ");
+		 PredicateTest.testPrint(age -> age >=29);
+		
+		 System.out.print("30세 아닌 사람들 : ");	 
+		 PredicateTest.testPrint(age -> age != 30);
+		 
+		 System.out.print("28~30세 사람들 : ");	 
+		 PredicateTest.testPrint(age -> age >= 28 && age <= 30);
+		 
+		
+	}
+	
+	static void testPrint(Predicate<Integer> op) {
+		for(int age :orAge) {
+			if(op.test(age))
+				System.out.print(age + " ");
+			
+		}
+		System.out.println();
+		System.out.println("=".repeat(50));
+	}
+
+}
+
+========================================================================================================================================
+
+package chap06;
+
+import java.util.IntSummaryStatistics;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import chap05.Dish;
+
+public class Summarizing {
+
+	public static void main(String[] args) {
+		
+		//요리의 갯수
+		long howManyDishes = Dish.menu.stream().collect(Collectors.counting());
+		Optional<Dish> findMostCaloriesDish = Dish.menu.stream().
+				collect(Collectors.reducing((d1,d2) -> d1.getCalories()> d2.getCalories()? d1 : d2));
+		int calculateTotalCalories =
+		Dish.menu.stream().collect(Collectors.summingInt(Dish::getCalories));
+		IntSummaryStatistics iss = Dish.menu.stream().collect(Collectors.summarizingInt(d-> d.getCalories()));
+		
+		System.out.println(calculateTotalCalories);
+		String getShortMenu =
+		Dish.menu.stream().map(Dish::getName).collect(Collectors.joining());
+
+		String getShortCommaSeperated =
+		Dish.menu.stream().map(Dish::getName).collect(Collectors.joining(", "));
+		System.out.println(getShortMenu);
+		System.out.println(getShortCommaSeperated);		
+
+		
+	}
+
+}
+
+
+========================================================================================================================================
+
+package chap06;
+
+import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.List;
+import chap05.Dish;
+
+public class Grouping {
+	
+	enum CaloricLevel {DIET, NORMAL, FAT};
+	public static void main(String[] args) {
+		
+		Map<Dish.Type, List<Dish>>  groupDishesByType =
+		Dish.menu.stream().collect(Collectors.groupingBy(Dish::getType));
+		groupDishesByType.get(Dish.Type.FISH);
+		groupDishesByType.values();
+		groupDishesByType.keySet();
+		groupDishesByType.entrySet();
+		
+		System.out.println(groupDishesByType.keySet());
+		System.out.println(groupDishesByType.values());
+		System.out.println(groupDishesByType.entrySet());
+		Map<Dish.Type, List<String>> groupDishNamesByType =
+		Dish.menu.stream().collect(Collectors.groupingBy(Dish::getType, Collectors.mapping(d->d.getName(), Collectors.toList())));
+		
+		System.out.println(groupDishNamesByType);
+		
+		Map<CaloricLevel, List<Dish>> groupDishesByCaloricLevel =
+		Dish.menu.stream().collect(Collectors.groupingBy(dish -> {
+			if(dish.getCalories() <=400) {
+				return CaloricLevel.DIET;}
+			else if(dish.getCalories() <= 700) {
+				return CaloricLevel.NORMAL;}
+			else {return CaloricLevel.FAT;}	// if
+			}//dish
+		)//groupby
+				);//collect
+		
+		groupDishesByCaloricLevel.keySet();
+		groupDishesByCaloricLevel.values();
+		groupDishesByCaloricLevel.entrySet();
+		
+		System.out.println(groupDishesByCaloricLevel.keySet());
+		System.out.println(groupDishesByCaloricLevel.values());
+		System.out.println(groupDishesByCaloricLevel.entrySet());
+		
+	}
+
+}
+
+
