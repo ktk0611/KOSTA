@@ -1,0 +1,9 @@
+collection has iterator(), hasnext(), next()
+for( : colleciotn or array)
+List, Queue, Set    Set+Colletion=map
+Stream in filter, map, limit, flatmap, sip, foreach etc....
+바이트 스트림 InputStream, OutputStream
+문자 스트림 Reader, Writer
+입출력 스트림 사용 
+      스트림 열기 -> 스트림 처리 -> 스트림 닫기
+        
