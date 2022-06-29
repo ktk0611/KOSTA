@@ -1,0 +1,17 @@
+바이트 스트림
+PrintStream
+  다양한 데이터 값을 편리하게 표현할 수 있도록 출력 스트림에 기능을 추가한 스트림
+  특징
+    IOException을 발생하지않음
+    자동 플러시 기능을 제공해 flush() 매서드를 호출하지 않고도 버퍼를 배울 수 있음
+      PrintStream(file file)
+      PrintStream(String filename)
+      PrintStream(OutputStream out)
+      PrintStream(OutputStream out, boolean autoFlush)
+    System.out 객체의 println(), print, printf() 매서드는 PrintStream으로 출력
+   
+문자스트림
+  데이터를 2바이트 단위인 유니코드로 전송하는데 이진 데이터로 된 이미지나 동영상 파일보다는 한글처럼 언어로 된 파일을 처리할 때 유용
+  종류는 크게 2가지로 Reader Writer로 분류
+  
+  
